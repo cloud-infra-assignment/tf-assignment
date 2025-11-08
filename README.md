@@ -2,7 +2,7 @@
 
 ## Architecture
 
----
+![Architecture Diagram](ARCHITECTURE.png)
 
 ## Components
 
