@@ -39,3 +39,8 @@ variable "common_tags" {
   type        = map(string)
 }
 
+variable "nlb_subnet_cidr" {
+  description = "CIDR block of the public subnet where the NLB resides (for health checks)"
+  type        = string
+}
+

@@ -41,6 +41,15 @@ resource "aws_security_group" "web" {
     description = "Allow HTTP from Leumi proxy only"
   }
 
+  # Allow NLB health checks from the NLB's subnet only
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = [var.nlb_subnet_cidr]
+    description = "Allow NLB health checks"
+  }
+
   egress {
     from_port   = 0
     to_port     = 0

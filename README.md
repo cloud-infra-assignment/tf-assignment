@@ -19,7 +19,7 @@
 ```bash
 terraform init
 terraform plan
-terraform apply -var="public_key=$(cat ~/.ssh/id_rsa.pub)"
+terraform apply
 ```
 
 ## Access

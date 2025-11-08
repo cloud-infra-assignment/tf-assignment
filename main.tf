@@ -29,6 +29,7 @@ module "web_server" {
   proxy_ip         = var.proxy_ip
   public_key       = var.public_key
   target_group_arn = module.nlb.target_group_arn
+  nlb_subnet_cidr  = var.public_subnet_cidr
   environment      = var.environment
   common_tags      = var.common_tags
 
