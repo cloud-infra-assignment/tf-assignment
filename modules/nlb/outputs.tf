@@ -13,8 +13,8 @@ output "target_group_arn" {
   description = "ARN of the target group"
 }
 
-output "nlb_security_group_id" {
-  value       = aws_security_group.nlb.id
-  description = "Security group ID for NLB"
+output "nlb_eip" {
+  value       = aws_eip.nlb.public_ip
+  description = "Elastic IP address of the NLB (fixed public IP)"
 }
 

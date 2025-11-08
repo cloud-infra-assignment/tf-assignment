@@ -1,36 +1,28 @@
-# Security Group for NLB
-resource "aws_security_group" "nlb" {
-  vpc_id      = var.vpc_id
-  description = "Security group for Network Load Balancer"
-
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = [var.proxy_ip]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
+# Elastic IP for NLB (fixed public IP as required)
+resource "aws_eip" "nlb" {
+  domain = "vpc"
 
   tags = merge(
     var.common_tags,
     {
-      Name = "${var.environment}-nlb-sg"
+      Name = "${var.environment}-nlb-eip"
     }
   )
 }
 
 # Network Load Balancer
+# Note: NLBs don't support security groups. IP filtering must be done via:
+# 1. NACLs on the subnet level, or
+# 2. Security groups on the target EC2 (but client IP is preserved)
 resource "aws_lb" "nlb" {
   internal           = false
   load_balancer_type = "network"
-  subnets            = [var.subnet_id]
-  security_groups    = [aws_security_group.nlb.id]
+
+  # Use subnet_mapping to assign the Elastic IP
+  subnet_mapping {
+    subnet_id     = var.subnet_id
+    allocation_id = aws_eip.nlb.id
+  }
 
   tags = merge(
     var.common_tags,
@@ -45,6 +37,15 @@ resource "aws_lb_target_group" "web" {
   port     = 80
   protocol = "TCP"
   vpc_id   = var.vpc_id
+
+  health_check {
+    enabled             = true
+    healthy_threshold   = 2
+    unhealthy_threshold = 2
+    interval            = 30
+    port                = 80
+    protocol            = "TCP"
+  }
 
   tags = merge(
     var.common_tags,

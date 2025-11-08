@@ -3,6 +3,11 @@ output "nlb_dns" {
   description = "Network Load Balancer DNS name - use this to access the web server"
 }
 
+output "nlb_public_ip" {
+  value       = module.nlb.nlb_eip
+  description = "Fixed Elastic IP address of the NLB (VIP) - use this to access the web server"
+}
+
 output "ec2_private_ip" {
   value       = module.web_server.private_ip
   description = "EC2 private IP (not directly accessible - only through NLB)"

@@ -8,9 +8,9 @@
 
 | Component | Details | Location |
 |-----------|---------|----------|
-| **NLB** | Network Load Balancer on port 80 | Public Subnet |
+| **NLB** | Network Load Balancer on port 80 with fixed Elastic IP (VIP) | Public Subnet |
 | **EC2** | Apache web server (Amazon Linux 2) | Private Subnet |
-| **Security** | Only 91.231.246.50 can access NLB | NLB Security Group |
+| **Security** | Only 91.231.246.50 can access the web server | EC2 Security Group |
 | **NAT Gateway** | Enables EC2 outbound internet access | Public Subnet |
 | **IGW** | Internet Gateway for internet connectivity | VPC |
 
@@ -26,12 +26,17 @@ terraform apply -var="public_key=$(cat ~/.ssh/id_rsa.pub)"
 
 From 91.231.246.50:
 ```bash
-curl http://<nlb-dns>
+# Using fixed Elastic IP (recommended)
+curl http://$(terraform output -raw nlb_public_ip)
+
+# Or using DNS
+curl http://$(terraform output -raw nlb_dns)
 ```
 
-Get the NLB DNS:
+Get the NLB endpoints:
 ```bash
-terraform output nlb_dns
+terraform output nlb_public_ip  # Fixed Elastic IP (VIP)
+terraform output nlb_dns        # DNS name
 ```
 
 ## Cleanup
